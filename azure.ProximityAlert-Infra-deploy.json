@@ -1,0 +1,356 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+                "subscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionid]",
+            "metadata": {
+                "description": "The subscription ID of the Azure subscription to deploy into."
+            }
+        },
+                "projectName": {
+            "type": "string",
+            "defaultValue": "contoso",
+            "minLength": 1,
+            "maxLength": 11,
+            "metadata": {
+                "description": "Define the project name or prefix for all objects."
+            }
+        },
+                "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The datacenter to use for the deployment."
+            }
+        },
+                "randomValue": {
+            "defaultValue": "[substring(uniqueString(utcNow()),0,8)]",
+            "type": "string",
+            "metadata": {
+                "description": "Random alphanumeric string to make the assets have a unique name."
+            }
+        },
+                "service_bus_namespace_in": {
+            "type": "string",
+            "defaultValue": "ContosoSBNamespace",
+            "metadata": {
+                "description": "Namespace of the service bus that has the queue to which messages are routed."
+            }
+        },
+
+        "service_bus_queue_in": {
+            "type": "string",
+            "defaultValue": "ContosoSBQueue",
+            "metadata": {
+                "description": "Name of the service bus queue to which to route messages."
+            }
+        },
+        "service_bus_queue_endpoint": {
+            "type": "string",
+            "defaultValue": "ContosoSBQueueEndpoint",
+            "metadata": {
+                "description": "Endpoint to use for routing messages to the service bus queue."
+            }
+        },
+                "AuthRules_sb_queue": {
+            "type": "string",
+            "defaultValue": "AuthRules_sb_queue",
+            "metadata": {
+                "description": "Authorization rules for the service bus queue."
+            }
+        },
+        "connections_servicebus_name": {
+            "defaultValue": "servicebus",
+            "type": "String"
+        },
+        "connections_outlook_name": {
+            "defaultValue": "outlook",
+            "type": "String"
+        },
+                "workflows_logicapp_name": {
+            "defaultValue": "testpi-logicapp",
+            "type": "String"
+        }
+    },
+    "variables": {
+        "queueAuthorizationRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/queues/authorizationRules', variables('service_bus_namespace'), parameters('service_bus_queue_in'), parameters('AuthRules_sb_queue'))]",
+        "iotHubName": "[concat(parameters('projectName'), 'Hub', uniqueString(resourceGroup().id))]",
+        "service_bus_namespace": "[concat(parameters('service_bus_namespace_in'),parameters('randomValue'))]",
+        "sbVersion": "2018-01-01-preview"
+    },
+    "resources": [
+        {
+//Service bus
+            "type": "Microsoft.ServiceBus/namespaces",
+            "comments": "The Sku should be 'Standard' for this tutorial.",
+            "sku": {
+                "name": "Basic",
+                "tier": "Basic"
+            },
+            "name": "[variables('service_bus_namespace')]",
+            "apiVersion": "[variables('sbVersion')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "metricId": "[concat('a4295411-5eff-4f81-b77e-276ab1ccda12:', variables('service_bus_namespace'))]",
+                "serviceBusEndpoint": "[concat('https://', variables('service_bus_namespace'),'.servicebus.windows.net:443/')]",
+                "status": "Active",
+                "zoneRedundant": false
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('service_bus_namespace'), '/RootManageSharedAccessKey')]",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', variables('service_bus_namespace'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "name": "[concat(variables('service_bus_namespace'), '/', parameters('service_bus_queue_in'))]",
+            "apiVersion": "[variables('sbVersion')]",
+            "location": "[parameters('location')]",
+            "scale": null,
+            "properties": {},
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', variables('service_bus_namespace'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues/authorizationRules",
+            "name": "[concat(variables('service_bus_namespace'), '/', parameters('service_bus_queue_in'), '/', parameters('AuthRules_sb_queue'))]",
+            "apiVersion": "[variables('sbVersion')]",
+            "location": "[parameters('location')]",
+            "scale": null,
+            "properties": {
+                "rights": [
+                    "Manage",
+                    "Listen",
+                    "Send"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', variables('service_bus_namespace'))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/queues', variables('service_bus_namespace'), parameters('service_bus_queue_in'))]"
+            ]
+        },
+        //IOT HUB
+        {
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2020-08-31",
+            "name": "[variables('IoTHubName')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', variables('service_bus_namespace'))]",
+                "[resourceId('Microsoft.ServiceBus/namespaces/queues', variables('service_bus_namespace'), parameters('service_bus_queue_in'))]"
+            ],
+            "sku": {
+                "name": "B1",
+                "tier": "Basic",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "None"
+            },
+            "properties": {
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 2
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [
+                            {
+                                "connectionString": "[Concat('Endpoint=sb://',variables('service_bus_namespace'),'.servicebus.windows.net/;SharedAccessKeyName=',parameters('AuthRules_sb_queue'),';SharedAccessKey=',listkeys(variables('queueAuthorizationRuleResourceId'),variables('sbVersion')).primaryKey,';EntityPath=',parameters('service_bus_queue_in'))]",
+                                "name": "[parameters('service_bus_queue_endpoint')]",
+                                "subscriptionId": "[parameters('subscriptionId')]",
+                                "resourceGroup": "[resourceGroup().Name]"
+                            }
+                        ],
+                        "serviceBusTopics": [],
+                        "eventHubs": [],
+                        "storageContainers": []
+                    },
+                    "routes": [
+                        {
+                            "name": "contosoSBQueueRoute",
+                            "source": "DeviceMessages",
+                            "condition": "distanceAlert = \"true\"",
+                            "endpointNames": [
+                                "[parameters('service_bus_queue_endpoint')]"
+                            ],
+                            "isEnabled": true
+                        }
+                    ],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "messagingEndpoints": {
+                    "fileNotifications": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None"
+            }
+        },
+        //LOGIC APP CONNECTOR(Service Bus)
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_servicebus_name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', variables('service_bus_namespace'), 'RootManageSharedAccessKey')]"
+            ],
+            "properties": {
+                "displayName": "ServiceBusConnection",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/eastus/managedApis/', parameters('connections_servicebus_name'))]"
+                },
+                "parameterValues": {
+                    "connectionString": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('service_bus_namespace'), 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]"
+                }
+            }
+        },
+         //LOGIC APP CONNECTOR(Outlook)
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_outlook_name')]",
+            "location": "eastus",
+            "kind": "V1",
+            "properties": {
+                "displayName": "Outlook.com",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/eastus/managedApis/', parameters('connections_outlook_name'))]"
+                }
+            }
+        },
+        //Logic App
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_logicapp_name')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('connections_servicebus_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_outlook_name'))]"
+            ],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_one_or_more_messages_arrive_in_a_queue_(auto-complete)_2": {
+                            "recurrence": {
+                                "frequency": "Second",
+                                "interval": 5
+                            },
+                            "splitOn": "@triggerBody()",
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['servicebus']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/@{encodeURIComponent(encodeURIComponent('ContosoSBQueue'))}/messages/batch/head", // raspi-queue
+                                "queries": {
+                                    "maxMessageCount": 175,
+                                    "queueType": "Main"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Send_an_email_(V2)": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "Body": "<p>proximity</p>",
+                                    "Subject": "Proximity alert",
+                                    "To": "ujjwal1141@outlook.com"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['outlook']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/Mail"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "outlook": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections/', parameters('connections_outlook_name'))]",
+                                "connectionName": "outlook",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'outlook')]"
+                            },
+                            "servicebus": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections/',  parameters('connections_servicebus_name'))]",
+                                "connectionName": "servicebus",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "sbq_connectionString": {
+            "type": "string",
+            "value": "[Concat('Endpoint=sb://',variables('service_bus_namespace'),'.servicebus.windows.net/;SharedAccessKeyName=',parameters('AuthRules_sb_queue'),';SharedAccessKey=',listkeys(variables('queueAuthorizationRuleResourceId'),variables('sbVersion')).primaryKey,';EntityPath=',parameters('service_bus_queue_in'))]"
+        }
+    }
+}
