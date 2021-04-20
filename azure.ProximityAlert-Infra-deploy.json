@@ -298,7 +298,7 @@
                                     }
                                 },
                                 "method": "get",
-                                "path": "/@{encodeURIComponent(encodeURIComponent('ContosoSBQueue'))}/messages/batch/head", // raspi-queue
+                                "path": "/@{encodeURIComponent(encodeURIComponent('ContosoSBQueue'))}/messages/batch/head", 
                                 "queries": {
                                     "maxMessageCount": 175,
                                     "queueType": "Main"
