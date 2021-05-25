@@ -6,8 +6,8 @@
      1. [Prerequisites](#Prerequisites)
      2. [Deployment](#Deployment)
 * [2. Raspberry Pi Setup](#2.Raspberry-Pi-Setup)
-     1. [Prerequisites](#Prerequisites)
-     2. [Deployment](#Deployment)
+     1. [Prerequisites](#Prerequisites-1)
+     2. [Deployment](#Deployment-1)
 * [Deployment](#Deployment)
 
 ## Description Table
