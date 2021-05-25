@@ -4,7 +4,7 @@ import time
 from azure.iot.device import IoTHubDeviceClient, Message
 
 # Primary Connection String
-CONNECTION_STRING = "HostName=homeiot1111.azure-devices.net;DeviceId=myraspi;SharedAccessKey=OaqU6NKWtasDnm+YnoUco0mfLUkQrHbJexvTh/R5M9E="
+CONNECTION_STRING = "<Your-Primary-Connection-String>"
 MSG_TXT = '{{"distance":{distance}}}'
 
 # GPIO settings
