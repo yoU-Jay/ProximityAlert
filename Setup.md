@@ -2,6 +2,7 @@
 
 ## Contents
 * [Requirements](#Requirements)
+* [Setup](#Setup)
 
 
 ## Requirements
@@ -12,8 +13,12 @@ Hardware and Software tools required for this setup are listed below.
 4. Microsoft Azure subscription
 5. Azure CLI 
 
+## Architecture
+###Add ultrasonic sensor###
+![ProximityAlert_infra](https://user-images.githubusercontent.com/59735375/120606670-0f2cb680-c46d-11eb-8e24-33a730d5d494.png)
+
 ## Setup
-### Setting up Raspberry Pi
+## Setting up Raspberry Pi
 
 * #### Before you get started
   For this setup you need a preconfigured Raspberry Pi with an OS (of your choice) and Python 3 installed. 
@@ -154,4 +159,6 @@ if __name__ == '__main__':
 ```
    
    * Save **ProximityAlert_D2C.py**.
+
+## Setting up Azure
 
