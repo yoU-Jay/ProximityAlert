@@ -52,17 +52,17 @@ def distance_measure():
     print("Distance:", distance, "cm")
 
 #Function to check if a parked car moves out of the slot
-def test2():
+def Parked():
     while True:
         park_dist_prev = int(distance)
         distance_measure()
         park_dist_curr = int(distance)
         if park_dist_curr != park_dist_prev:
-            print("going to test1")
-            test()
+            print("Exiting Parked. Going to ProximityDetect")
+            ProximityDetect()
 
 #main
-def test():
+def ProximityDetect():
     try:
       client = iothub_client_init()
       print("IoT Hub device sending periodic messages, press Ctrl+C to exit")
@@ -97,8 +97,8 @@ def test():
                             print("pass", x)
 
                         elif x == 5:                         
-                            print("test fn", x)
-                            test2()
+                            print("Exiting ProximityDetect. Going to Parked", x)
+                            Parked()
 
                         else:                               
                             print("breaking")
@@ -113,4 +113,4 @@ def test():
 if __name__ == '__main__':
     print("IoT Hub Quickstart ")
     print("ctrlcto exit")
-    test()
+    ProximityDetect()
