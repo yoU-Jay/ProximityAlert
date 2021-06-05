@@ -161,4 +161,37 @@ if __name__ == '__main__':
    * Save **ProximityAlert_D2C.py**.
 
 ## Setting up Azure
+* ## Prerequisites
+* An installed and configured Azure CLI
 
+### Deployment
+This setup can deployed on either __Windows Environment__ (using `setup.bat`) or __Linux Environment__ (using `setup.sh`).
+
+> __*Note*__  
+> The setup file creates a new Resource group and then deploys the Resources to it. The Following resources are created:
+> 1. Service Bus Namespace
+> 2. Service Bus Queue
+> 3. IoT Hub
+> 4. Logic App 
+> 5. Logic App Connectors
+
+1. Open a terminal and login to Azure using `az login` command.
+
+2. Depending on the environment you are using, run the following command:  
+    * ##### In Windows Environment
+      In command prompt run ```setup.bat```
+      ###### Example:
+      ```
+        >setup.bat
+        Starting...
+        Enter resource group name: <Insert Resource Group Name>
+      ```
+    * ##### In Linux Environment
+      In terminal run ```setup.sh```
+      ###### Example:
+      ```
+        $setup.sh
+        Starting...
+        Enter resource group name: <Insert Resource Group Name>
+      ```
+3.        
