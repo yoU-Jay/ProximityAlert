@@ -7,10 +7,10 @@ This setup guide deals with setting up and deploying the **ProximityAlert** infr
 * [Requirements](#Requirements)
 * [Architecture](#Architecture)
 * [Setup](#Setup)
-  1. [1. Setting up Azure](#1.-Setting-up-Azure)
+  1. [1. Setting up Azure](#1.Setting-up-Azure)
      * [Prerequisites](#Prerequisites)
      * [Deployment](#Deployment)
-  2. [2. Setting up Raspberry Pi](#2.-Setting-up-Raspberry-Pi)
+  2. [2. Setting up Raspberry Pi](#2.Setting-up-Raspberry-Pi)
      * [Before you get started](#Before-you-get-started)
      * [Making the connections](#Making-the-connections)
      * [Inside the Pi](#Inside-the-Pi)
@@ -36,9 +36,9 @@ There are two parts to this setup,
 1. Azure Setup
 2. Raspberry Pi Setup 
 
-## 1. Setting up Azure
+## 1.Setting up Azure
 
-* ## Prerequisites
+* ### Prerequisites
   * An installed and configured Azure CLI
 
 * ### Deployment
@@ -85,20 +85,20 @@ There are two parts to this setup,
 
   
 
-## 2. Setting up Raspberry Pi
+## 2.Setting up Raspberry Pi
 
-* #### Before you get started
+* ### Before you get started
   For this setup you need a preconfigured Raspberry Pi with an OS (of your choice) and Python 3 installed. 
   > __*Note*__: This setup was tested with _**Raspberry Pi OS (Raspbian)**_ which has Python 3 pre-installed.
 
-* #### Making the connections
+* ### Making the connections
    A HC-SR04 Ultrasonic Distance Sensor Module is used to sense the presence of a vehicle in its proximity. Construct the circuit as shown below.
    
    ![raspberry-pi-hc-sr04-distance-measuring-sensor](https://user-images.githubusercontent.com/59735375/120596889-ec48d500-c461-11eb-96da-7298508035dc.jpg)
    
    ###Explain gpio setup###
   
-* #### Inside the Pi
+* ### Inside the Pi
    * Now, after the connections are done, power up your Raspberry Pi. 
    * Open a **Terminal** and create a new directory `Proximity-Alert`
    * Next, We have to install an Azure IoT Package. Inside the newly created directory, run the following command.  
