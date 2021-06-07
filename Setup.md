@@ -24,12 +24,12 @@ Hardware and Software tools required for this setup are listed below.
 3. Resistors - 1 x 560 Ω and 1 x 800 Ω
 4. Microsoft Azure subscription
 5. Azure CLI 
----
+
+
 # Architecture
 ###Add ultrasonic sensor###
 ![ProximityAlert_infra](https://user-images.githubusercontent.com/59735375/120606670-0f2cb680-c46d-11eb-8e24-33a730d5d494.png)
 
----  
 
 # Setup
 There are two parts to this setup,
@@ -52,7 +52,7 @@ There are two parts to this setup,
     > 4. Logic App 
     > 5. Logic App Connectors
   
-  1. Open a terminal and login to Azure using `az login` command.
+  1. Open a **terminal** and login to Azure using `az login` command.
   
   2. Depending on the environment you are using, run the following command:  
       * ##### In Windows Environment
@@ -73,9 +73,8 @@ There are two parts to this setup,
         ```
      This creates a Resource Group in `eastus` and deploys `azure.ProximityAlert-Infra-deploy.json` ARM template in the same Resource Group.
      
-  3. An IoT Device needs to be created. To do this, in the Azure Portal, navigate to the Resource Group created in the previous step.  
-  
-  4. Open the IoT Hub service.
+  3. An **IoT Device** needs to be created. To do this, in the **Azure Portal**, navigate to the Resource Group created in the previous step.  
+  4. Open the **IoT Hub** service.
   5. Click on **IoT devices** under **Explorers**.        
   6. Click on **+New** to add a new IoT device.
   7. Enter a name for your device under **Device ID** and leave other settings as it is.  
@@ -93,7 +92,7 @@ There are two parts to this setup,
   > __*Note*__: This setup was tested with _**Raspberry Pi OS (Raspbian)**_ which has Python 3 pre-installed.
 
 * #### Making the connections
-   An HC-SR04 Ultrasonic Distance Sensor Module is used to sense the presence of a vehicle in its proximity. Construct the circuit as shown below.
+   A HC-SR04 Ultrasonic Distance Sensor Module is used to sense the presence of a vehicle in its proximity. Construct the circuit as shown below.
    
    ![raspberry-pi-hc-sr04-distance-measuring-sensor](https://user-images.githubusercontent.com/59735375/120596889-ec48d500-c461-11eb-96da-7298508035dc.jpg)
    
@@ -101,7 +100,7 @@ There are two parts to this setup,
   
 * #### Inside the Pi
    * Now, after the connections are done, power up your Raspberry Pi. 
-   * Open a Terminal and create a new directory `Proximity-Alert`
+   * Open a **Terminal** and create a new directory `Proximity-Alert`
    * Next, We have to install an Azure IoT Package. Inside the newly created directory, run the following command.  
      `sudo pip3 install azure-iot-device`
    * Create a Python file **ProximityAlert_D2C.py** and paste in the following code to setup a Device to Cloud connection. *[How does this code work?](Design.md#Flowchart)*
