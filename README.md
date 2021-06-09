@@ -9,9 +9,9 @@ ProximityAlert is a parking detection and alerting application built using IoT a
 ## Description Table
 File Name | Description
 ------------ | -------------
-[Setup.md](#Setup.md) | Setup and Deployment Guide
-[Design.md](#Design.md) | Design description
-ProximityAlert_D2C.py | Python file on Raspberry Pi used to detect cars and send alerts to IoT hub. 
-azure.ProximityAlert-Infra-deploy.json | ARM template
-setup.bat | Batch file
-setup.sh | Shell script
+[Setup.md](Setup.md) | Setup and Deployment Guide
+[Design.md](Design.md) | Design description
+[ProximityAlert_D2C.py](ProximityAlert_D2C.py) | Python file on Raspberry Pi used to detect cars and send alerts to IoT hub. 
+[azure.ProximityAlert-Infra-deploy.json](azure.ProximityAlert-Infra-deploy.json) | ARM template
+[setup.bat](setup.bat) | Batch file
+[setup.sh](setup.sh) | Shell script
