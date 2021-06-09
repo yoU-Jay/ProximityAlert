@@ -14,7 +14,8 @@ This setup guide deals with setting up and deploying the **ProximityAlert** infr
      * [Before you get started](#Before-you-get-started)
      * [Making the connections](#Making-the-connections)
      * [Inside the Pi](#Inside-the-Pi)
-* [Deployment](#Deployment)
+* [Bringing up the setup](#Bringing-up-the-setup)
+* [Clean-up](#Clean-up)
 
 
 # Requirements
@@ -88,8 +89,9 @@ There are two parts to this setup,
 ## 2.Setting up Raspberry Pi
 
 * ### Before you get started
-  For this setup you need a preconfigured Raspberry Pi with an OS (of your choice) and Python 3 installed. 
-  > __*Note*__: This setup was tested with _**Raspberry Pi OS (Raspbian)**_ which has Python 3 pre-installed.
+  * For this setup you need a preconfigured Raspberry Pi with an OS (of your choice) and Python 3 installed. 
+    > __*Note*__: This setup was tested with _**Raspberry Pi OS (Raspbian)**_ which has Python 3 pre-installed.
+  * Raspberry Pi connected to the Internet.
 
 * ### Making the connections
    A HC-SR04 Ultrasonic Distance Sensor Module is used to sense the presence of a vehicle in its proximity. Construct the circuit as shown below.
@@ -235,4 +237,15 @@ There are two parts to this setup,
 
 ---
 
-# Deployment
+# Bringing up the setup
+Now, that Azure and Raspberry Pi are setup we can finally bring up our setup. 
+
+Run the saved python file using `python3 ProximityAlert_D2C.py`.  
+ 
+---
+
+# Clean-up
+## Delete the Resource group
+  1. Navigate to the Resource group in the **Azure Portal**.
+  2. Select your Resource group from the list.
+  3. Select Delete in the command bar and confirm the deletion by re-typing the Resource group name, and selecting Delete.
