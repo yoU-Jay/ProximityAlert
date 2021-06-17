@@ -97,7 +97,6 @@ There are two parts to this setup,
    
    ![raspberry-pi-hc-sr04-distance-measuring-sensor](https://user-images.githubusercontent.com/59735375/120596889-ec48d500-c461-11eb-96da-7298508035dc.jpg)
    
-   ###Explain gpio setup###
   
 * ### Inside the Pi
    * Now, after the connections are done, power up your Raspberry Pi. 
@@ -106,6 +105,7 @@ There are two parts to this setup,
      `sudo pip3 install azure-iot-device`
    * Create a Python file **ProximityAlert_D2C.py** and paste in the following code to setup a Device to Cloud connection. *[How does this code work?](Design.md#Flowchart)*
      > This code reads input from the Ultrasonic sensor module through GPIO Pins, then forms a connection between Raspberry Pi and Azure IoT Hub and transmits the recieved input to Azure.
+     > GPIO pin numbers are set in reference to the above diagram. Change the GPIO pin numbers accordingly if you are using a different circuit.
        ```
        # Libraries
        import RPi.GPIO as GPIO
@@ -161,17 +161,17 @@ There are two parts to this setup,
            print("Distance:", distance, "cm")
        
        #Function to check if a parked car moves out of the slot
-       def test2():
+       def Parked():
            while True:
                park_dist_prev = int(distance)
                distance_measure()
                park_dist_curr = int(distance)
                if park_dist_curr != park_dist_prev:
-                   print("going to test1")
+                   print("Exiting Parked. Going to ProximityDetect")
                    test()
        
        #main
-       def test():
+       def ProximityDetect():
            try:
              client = iothub_client_init()
              print("IoT Hub device sending periodic messages, press Ctrl+C to exit")
@@ -206,8 +206,8 @@ There are two parts to this setup,
                                    print("pass", x)
        
                                elif x == 5:                         
-                                   print("test fn", x)
-                                   test2()
+                                   print("Exiting ProximityDetect. Going to Parked", x)
+                                   Parked()
        
                                else:                               
                                    print("breaking")
