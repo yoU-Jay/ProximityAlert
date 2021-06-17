@@ -28,8 +28,7 @@ Hardware and Software tools required for this setup are listed below.
 
 
 # Architecture
-###Add ultrasonic sensor###
-![ProximityAlert_infra](https://user-images.githubusercontent.com/59735375/120606670-0f2cb680-c46d-11eb-8e24-33a730d5d494.png)
+![iot-hub-e2e-logic-apps](https://user-images.githubusercontent.com/59735375/122416064-0f1cd280-cfa6-11eb-8e46-d56c78fc1716.png)
 
 
 # Setup
